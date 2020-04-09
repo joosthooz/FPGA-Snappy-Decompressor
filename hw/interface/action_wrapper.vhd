@@ -24,7 +24,6 @@ USE ieee.std_logic_misc.all;
 USE ieee.std_logic_unsigned.all;
 USE ieee.numeric_std.all;
 
-USE work.psl_accel_types.ALL;
 USE work.action_types.ALL;
 
 

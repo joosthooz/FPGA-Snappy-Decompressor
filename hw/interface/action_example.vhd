@@ -284,7 +284,7 @@ architecture action_example of action_example is
 begin
 
     int_ctx <= reg_0x20(CONTEXT_BITS - 1 downto 0);
-    int_src <= "00";
+    int_src <= (others => '0');
 
 
 -- Instantiation of Axi Bus Interface AXI_CTRL_REG
