@@ -72,7 +72,7 @@ logic easy, i have "valid_inverse" register, this register is inversed after eve
 before writing to BRAM and after reading from BRAM*/
 always@(posedge clk)begin
 	if(~rst_n)begin
-		state		<= 3'd0;
+		state		<= 3'd5; //clear the BRAM to reset all the valid bits
 		rd_valid	<= 1'b1;
 		wr_address	<= 3'd0;
 	end
@@ -116,7 +116,7 @@ always@(posedge clk)begin
     */
    /****************************************************/
         if(rd_address==max_address) begin
-            if(page_finish & ready)begin //whether output all the data in page
+            if(page_finish)begin //whether output all the data in page
 			    state<=3'd3;
 			    final_valid	<=1'b1;
             end        
@@ -127,7 +127,7 @@ always@(posedge clk)begin
    /****************************************************/
 	end
 	3'd2:begin  //clean the input
-		if(valid_upper & ready)begin
+		if(valid_upper)begin
 			valid_inverse		<= ~valid_inverse;
 			state				<= 3'd1;		
 			block_out_finish_r	<= 1'b1;
@@ -137,12 +137,10 @@ always@(posedge clk)begin
 	end
 	
 	3'd3:begin
-		if(ready)begin
-			state		<=3'd4;
-			wr_flag		<=1'b1;
-			final_valid	<=1'b0;
-			rd_valid	<=1'b0;
-		end
+        state		<=3'd4;
+        wr_flag		<=1'b1;
+        final_valid	<=1'b0;
+        rd_valid	<=1'b0;
 		wr_address	<=3'd0;
 	end
 	
@@ -158,6 +156,26 @@ always@(posedge clk)begin
 			wr_flag			<=1'b1;
 		end
 	end
+	
+		3'd5:begin
+		state		<=3'd6;
+		wr_flag		<=1'b1;
+		final_valid	<=1'b0;
+		rd_valid	<=1'b0;
+		wr_address	<=3'd0;
+	end
+	
+	3'd6:begin  ////reset all the valid bit in BRAM
+		wr_address	<=wr_address+9'd1;
+		valid_inverse	<=1'b0;
+		rd_valid	<=1'b0;
+		if(wr_address==9'd511)begin
+			state		<=3'd0;
+		end else begin
+			wr_flag			<=1'b1;
+		end
+	end
+	
 	default:state		<=3'd0;
 	endcase
 end
