@@ -98,7 +98,9 @@ always@(posedge clk)begin
 		end		
 	end
 	3'd2:begin
-		cl_state	<=3'd0;
+    if (~page_finish) begin
+      cl_state	<=3'd0;
+    end
 		cl_flag		<=1'b0;
 	end
 	default:cl_state<=3'd0;
